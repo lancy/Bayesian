@@ -63,12 +63,28 @@ def eventProbabilityFromStringAndTokensProbabilityTable(string, tokensProbabilit
     A = 1
     B = 1
     for probability in probabilityList:
-        A = A * probability
-        B = B * (1 - probability)
+        A *= probability
+        B *= (1 - probability)
     if A + B == 0:
         return 0
     else:
         return A / (A + B)
+
+def tokensProbabilityTableFromHitAndMisStringList(hitStringList, misStringList):
+    hitCountTable = dict()
+    for hitString in hitStringList:
+        addTokensToCountTable(tokensFromString(hitString), hitCountTable)
+    hitProbabilityTable = probabilityTableFromCountTable(hitCountTable)
+
+    misCountTable = dict()
+    for misString in misStringList:
+        addTokensToCountTable(tokensFromString(misString), misCountTable)
+    misProbabilityTable = probabilityTableFromCountTable(misCountTable)
+
+    tokensProbabilityTable = tokensProbabilityTableFromHitAndMisProbabilityTable(hitProbabilityTable, misProbabilityTable)
+
+    return tokensProbabilityTable
+
 
 
 hitStringList = [
@@ -80,7 +96,9 @@ hitStringList = [
     "#京东沙漠风暴 优购网上鞋城同贺# 京东商城优购官方旗舰店百丽、他她、天美意、思加图、森达时尚男女鞋2.4折起；Nike、Adidas、CAT等运动户外品牌5.8折起，还有更多惊喜狂点 http://t.cn/zlFXm1V 即日起，关注@优购网上鞋城 转发此微博并@ 2位好友，即有机会获得新款鞋服！",
     "花瓣网：#有奖转发#给力大回馈，花小瓣送您白色iPad mini啦！活动规则很简单,只需 ①关注@花瓣网②转发本活动，就有机会获得一台白色iPad mini，新浪官方活动平台保证绝对公平，拼人品的时候到啦，快行动吧！转起来！！http://t.cn/zjqG92I",
     "为庆祝#OCS灿瑞半导体# 微博正式使用，有奖关注并转发活动。 活动时间：11/15-12/12 活动规则： 1、关注@OCS灿瑞半导体 2、转发本微博并@3位好友 将在每周四抽取5位幸运博友并公布名单，获得移动手机充值卡200元大奖。 活动持续中…",
-]
+    "#2012末日大狂欢#【末日预告 有奖转发】一场超越人类极限的末日浩劫正在逼近!你准备好了吗?3亿人的末日之旅、终极狂欢即将开始!打开UC浏览器,让我们一起在狂欢中穿越劫难,结伴重生!还有32台小米2;10台iPad min大放送,关注@UC浏览器 转发微博并@ 好友,11.27—11.29每天送2台蓝牙耳机;11.30送出小米手机2",
+
+    ]
 
 misStringList = [
     "【晚安】有时候或许该想想：你真的是活了一万多天，还是只活了一天，却重复了一万多次？",
@@ -97,26 +115,18 @@ misStringList = [
     "梓纯桑：@_市隐@Tata_紫涵@立立程@小切猫咪会变成那个人//@大学城周sir://@广东工业大学机电学生会: 【身体是革命的本钱】大家都尽量不要熬夜，注意休息啊！◆◆@南有乔木229：据悉，我校信息学院10级陈某同学昨晚入睡后，今天（11月27日）早上7点多舍友发现叫其不醒，马上打120、110，医生第一时间赶到现场抢救至8点38分宣告不治。医生与法医鉴定其为猝死。在此深表痛惜与哀悼！",
 ]
 
-
-hitCountTable = dict()
-for hitString in hitStringList:
-    addTokensToCountTable(tokensFromString(hitString), hitCountTable)
-hitProbabilityTable = probabilityTableFromCountTable(hitCountTable)
-
-misCountTable = dict()
-for misString in misStringList:
-    addTokensToCountTable(tokensFromString(misString), misCountTable)
-misProbabilityTable = probabilityTableFromCountTable(misCountTable)
-
-tokensProbabilityTable = tokensProbabilityTableFromHitAndMisProbabilityTable(hitProbabilityTable, misProbabilityTable)
-
-
 testStringList = [
-
-
-
+    "#2012末日大狂欢#【末日预告 有奖转发】一场超越人类极限的末日浩劫正在逼近!你准备好了吗?3亿人的末日之旅、终极狂欢即将开始!打开UC浏览器,让我们一起在狂欢中穿越劫难,结伴重生!还有32台小米2;10台iPad min大放送,关注@UC浏览器 转发微博并@ 好友,11.27—11.29每天送2台蓝牙耳机;11.30送出小米手机2",
+    "# 有奖转发 #快到圣诞节了，也没什么好送的。今年在型月10周年会场上买的挂画set，拿回来后没开封一直放在箱子里积灰。这次抽选一位转发者，规则很简单，只要转发就可以了。截止至12月12日的晚上10点。",
+    "有奖转发签到帖】#潮这儿来 惠玩才型# 2012中国移动新业务潮玩体验营，11月27日精彩第八站——四川成都，四川师范大学成龙校区！吴克群、张惠妹、周杰伦、蔡依林 、容祖儿、刘德华、孙楠、许嵩、郁可唯··· 专属正版专辑，转发本微博，终极礼包等你来拿！今日下午，缤纷精彩，快潮这儿来",
+    "大半夜的，吐槽一下下：关于那些有奖转发的微博我看见了，我也很心动，我的原则是：转发一次足矣，中奖了算走狗屎运，没中奖就当是为提高达人积分做一点点贡献",
+    "#感恩2012#沃妹感谢所有支持联通的亲们！只要您在11月26日-12月14日期间登录联通网上营业厅http://t.cn/zjbHGcE，沃妹就以2000元代金券回报！绝不食言，来多少送多少！iPhone4S、三星Galaxy S3、小米1S、HTC等明星终端任你降，转发再赢2000元京东卡大奖！ http://t.cn/zjGds9I",
+    "好吧，承认每天必关注有奖转发,有朋友会问为何不自己买？太烦且还花时间，想说，其实你们不懂我滴，🙀中奖那刻的喜悦不足言表，晒奖品时仍那么感动和兴奋，同时也能为俊男美女们提供产品的使用心得，来一个现身说法，该睡了，各位好梦",
+    "您想免费体验世界顶级的四季酒店吗？你只要在11・26至12・2期间同时关注了@中国银联 与@四季酒店FOURSEASONS，猜中图片里四季酒店的所在城市,转发此微博，写出答案并@三名好友，便有机会赢取入住2晚的免费体验！名额共3位，立刻行动吧！#世界游你享#！ http://t.cn/zjbQUmA",
+    "#有奖转发#去欧洲旅游可以分期付款咯，欧洲6国12天，每期只要824元！转发此微博并@ 两位好友，就有机会获得徐静蕾《印象非洲》一本，详情请猛戳：http://t.cn/zln4xKY http://t.cn/zjG7tvF",
 ]
 
+tokensProbabilityTable = tokensProbabilityTableFromHitAndMisStringList(hitStringList, misStringList);
 
 for x in range(0, len(testStringList)):
     print "Test", x, "probability =", eventProbabilityFromStringAndTokensProbabilityTable(testStringList[x], tokensProbabilityTable)
