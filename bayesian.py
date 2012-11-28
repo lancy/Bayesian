@@ -111,7 +111,25 @@ testStringList = readListFromFileWithFileName(testFileName)
 tokensProbabilityTable = tokensProbabilityTableFromHitAndMisStringList(hitStringList, misStringList)
 
 
+print "System Test"
 for item in testStringList:
-    print "=============="
-    print "probability =", eventProbabilityFromStringAndTokensProbabilityTable(item, tokensProbabilityTable)
+    probability = eventProbabilityFromStringAndTokensProbabilityTable(item, tokensProbabilityTable)
+    print "probability =", probability
     print "weibo = ", item
+    print "=============="
+
+
+weibo = raw_input("Enter a weibo or 'quit': ")
+while weibo != "quit":
+    probability = eventProbabilityFromStringAndTokensProbabilityTable(weibo, tokensProbabilityTable)
+    print "probability =", probability
+    check = raw_input("Is it lottery weibo? (y/n/pass): ")
+    if check == "y":
+        hitStringList.append(weibo.strip())
+    elif check == "n":
+        misStringList.append(weibo.strip())
+    weibo = raw_input("Enter a weibo or 'quit': ")
+
+writeListToFileWithFileName(hitStringList, hitFileName)
+writeListToFileWithFileName(misStringList, misFileName)
+print "Saved user selections. Exit."
