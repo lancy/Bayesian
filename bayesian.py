@@ -1,10 +1,8 @@
 #encoding=utf-8
 
 #
-# hitHash and misHash
-# P(A|ti）= P2(ti) / [(P1(ti) + P2(ti)]
 #
-# probabilityHahs
+# Pr(H | T) = Pr(T | H) / [Pr(T | H) + Pr( T | M)]
 # P(A|t1, t2, t3 ... tn) = (P1 * P2 * ... * PN) / [P1 * P2 * ... * PN + (1 - P1) * (1 - P2) * ... * (1 - PN)]
 
 import jieba
@@ -70,6 +68,7 @@ def eventProbabilityFromStringAndTokensProbabilityTable(string, tokensProbabilit
     else:
         return A / (A + B)
 
+
 def tokensProbabilityTableFromHitAndMisStringList(hitStringList, misStringList):
     hitCountTable = dict()
     for hitString in hitStringList:
@@ -85,10 +84,12 @@ def tokensProbabilityTableFromHitAndMisStringList(hitStringList, misStringList):
 
     return tokensProbabilityTable
 
+
 def writeListToFileWithFileName(list, fileName):
     file = open(fileName, "w")
     for item in list:
         file.write("%s\n" % item)
+
 
 def readListFromFileWithFileName(fileName):
     newList = list()
@@ -96,8 +97,6 @@ def readListFromFileWithFileName(fileName):
     for line in file:
         newList.append(line.strip())
     return newList
-
-
 
 
 hitFileName = "hitFileName.txt"
@@ -128,6 +127,7 @@ while weibo != "quit":
         hitStringList.append(weibo.strip())
     elif check == "n":
         misStringList.append(weibo.strip())
+    print "============="
     weibo = raw_input("Enter a weibo or 'quit': ")
 
 writeListToFileWithFileName(hitStringList, hitFileName)
